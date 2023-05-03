@@ -12,12 +12,16 @@ import './Post.css'
 
 export function Post({ author, publishedAt, content }){
 
+  // Armazena e cria os nossos comentários
   const [comments, setComments] = useState([
    'Post muito bacana, hein?',
   ])
 
+  //Armazena em tempo real tudo que é digitado na TextArea
   const [newCommentText, setNewCommentText] = useState('')
 
+
+  // API de formatação de hora
   const publishedDateFormatted = format(publishedAt, "d 'de' LLL 'ás' HH:mm'h'",{
     locale: ptBR,
   })
@@ -27,6 +31,7 @@ export function Post({ author, publishedAt, content }){
     addSuffix: true,
   })
 
+// Função de onSubmit do form para setar um novo comentário, usando a variavel NewCommentText
   function handleCreateNewComment(e){
     e.preventDefault()
 
@@ -34,8 +39,14 @@ export function Post({ author, publishedAt, content }){
     setNewCommentText('')
   }
 
+  // Função de onChange que usa a função setNewCommentText 
   function handleNewCommentChange(e){
+    e.target.setCustomValidity('')
     setNewCommentText(e.target.value)
+  }
+
+  function handleNewCommentInvalid(e){
+   e.target.setCustomValidity('Esse campo é obrigatório!')
   }
 
   function deleteComment(commentToDelete){
@@ -46,6 +57,8 @@ export function Post({ author, publishedAt, content }){
 
     setComments(commentsWithoutDeletedOne)
   }
+
+  const isNewCommentEmpty = newCommentText.length === 0
 
   return(
     <article className='post'>
@@ -81,10 +94,14 @@ export function Post({ author, publishedAt, content }){
          placeholder='Deixe um comentário'
          value={newCommentText}
          onChange={handleNewCommentChange}
+         onInvalid={handleNewCommentInvalid}
+         required
          />
 
         <footer>
-          <button type='submit'>Comentar</button>
+          <button type='submit' disabled={isNewCommentEmpty}>
+            Comentar
+          </button>
         </footer>
       </form>
 
